@@ -1,12 +1,15 @@
 import os
 import re
 import sys
-from Player import Player
-import Game
+import random as rnd
+from quasar6.Player import Player
+from quasar6 import Game
 
 P1 = Player(Player.def_name_1)
 AI = Player(Player.def_name_2)
 field = Game.Field.get_instance()
+sounds = ('beep', 'boop', 'bleep', 'bloop')
+marks = ('?', '!', '!?', '...', '(ノಠ益ಠ)ノ彡┻━┻', '..・ヾ(。＞＜)シ')
 
 
 def choose_name():
@@ -42,7 +45,7 @@ def print_standings():
 
 def help_message():
     print("\n!!!  Valid position values: 1-" + str(field.get_size()))
-    print("!!!  Values are to be separated by a comma ',' e.g. '2,3'")
+    print("!!!  Values are to be separated by a comma ',' first is row second is column e.g. '2,3'")
     print("!!!  In order to quit type 'quit' or 'q'")
     print("!!!  In order to reset the scoreboard type 'reset' or 'r'")
     print("!!!  In order to show this help message type 'help' or 'h'\n")
@@ -50,7 +53,6 @@ def help_message():
 
 def run():
     pls = "\n!!!  Please retry!"
-
     if Game.p_turn == "X":
         while True:
             inp = input(P1.get_name() + " > ")
@@ -94,6 +96,17 @@ def run():
             Game.p_turn = "O"
             break
     else:
+        beep = ""
+        for x in range(5, 16):
+            if x == 0:
+                beep += str(rnd.choice(sounds))
+            else:
+                beep += str(rnd.choice(sounds))
+            if x != 15:
+                beep += " "
+
+        beep += rnd.choice(marks)
+        print(beep.capitalize())
         (m, px, py) = field.max(-2, 2)
         field.set_field_symbol(px, py)
         field.print_field()
@@ -138,10 +151,9 @@ print("_______\\                      \\ \\__\\   \\ \\_______\\   \\ \\_______\
 print("        \\|__|    \\|__|    \\|_______|                       \\|__|    \\|__|\\|__|    \\|_______|    ", end="")
 print("                   \\|__|    \\|_______|    \\|_______|")
 print("                                                                    BY QUASAR6", end="")
-print("                                                                v1.0.3\n")
+print("                                                                v1.0.5\n")
 
 choose_name()
-field.set_field_size()
 help_message()
 print_standings()
 run()

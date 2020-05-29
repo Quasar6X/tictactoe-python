@@ -19,25 +19,7 @@ class Field:
         else:
             Field.__instance = self
         self.SIZE = 3
-        self.FIELD = [[]]
-
-    def set_field_size(self):
-        inp = input("\n!!!  How big of a field do you want to play on? (valid values: 3-15) > ").lower()
-        if inp == 'q' or inp == 'quit':
-            exit(0)
-
-        if not inp.isnumeric():
-            print("!!!  Please input a valid field size!")
-            self.set_field_size()
-            return
-
-        self.SIZE = int(inp)
-        if self.SIZE < 3 or self.SIZE > 15:
-            print("!!!  Please input a valid field size!")
-            self.set_field_size()
-            return
-
-        self.FIELD = [["_"] * self.SIZE for _ in range(self.SIZE)]
+        self.FIELD = [["_"] * 3 for _ in range(3)]
 
     def set_field_symbol(self, i, j):
         if self.FIELD[i][j] != '_':
