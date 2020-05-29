@@ -84,7 +84,7 @@ class Field:
                 return diag_s[0]
         if count_ == 0:
             return "draw"
-        return False
+        return "Invalid game state!"
 
     def reset_field(self):
         for i in range(self.SIZE):
