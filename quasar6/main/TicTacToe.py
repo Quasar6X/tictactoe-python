@@ -2,8 +2,8 @@ import os
 import re
 import sys
 import random as rnd
-from quasar6.Player import Player
-from quasar6 import Game
+from quasar6.main.Player import Player
+from quasar6.main import Game
 
 P1 = Player(Player.def_name_1)
 AI = Player(Player.def_name_2)
