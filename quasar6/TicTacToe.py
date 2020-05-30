@@ -116,15 +116,22 @@ def run():
     if result == "X":
         print(P1.get_name() + " Wins!")
         P1.set_score(P1.get_score() + 1)
+        print_standings()
+        restart()
+        return
     if result == "O":
         print(AI.get_name() + " Wins!")
         AI.set_score(AI.get_score() + 1)
+        print_standings()
+        restart()
+        return
     if result == "draw":
         print("It's a draw!")
+        print_standings()
+        restart()
+        return
 
-    print_standings()
-    restart()
-    return
+    run()
 
 
 sys.stdout.write("\x1b[8;{rows};{cols}t".format(rows=40, cols=148))
