@@ -73,7 +73,7 @@ def run():
                 return
 
             positions = inp.split(",")
-            if len(positions) < 2 or not re.match("^[ ]*[1-9](|[0-5])[ ]*,[ ]*[1-9](|[0-5])[ ]*$", inp):
+            if len(positions) < 2 or not re.match("^[ ]*[1-3][ ]*,[ ]*[1-3][ ]*$", inp):
                 print("!!!  Invalid position!" + pls)
                 run()
                 return
