@@ -19,7 +19,7 @@ class Field:
         else:
             Field.__instance = self
         self.SIZE = 3
-        self.FIELD = [["_"] * 3 for _ in range(3)]
+        self.FIELD = [["_"] * self.SIZE for _ in range(self.SIZE)]
 
     def set_field_symbol(self, i, j):
         if self.FIELD[i][j] != '_':
@@ -45,24 +45,34 @@ class Field:
         print("-" * (self.SIZE * 2 + 3))
 
     def is_match(self):
+        string_row = ""
         for i in range(self.SIZE):
             for j in range(self.SIZE):
-                count_row = 0
-                count_col = 0
                 if self.FIELD[i][j] == "_":
                     continue
-
-                tmp = self.FIELD[i][j]
-                for k in range(j + 1, self.SIZE):
-                    if tmp == self.FIELD[i][k]:
-                        count_row += 1
-                        if count_row == self.SIZE - 1:
-                            return tmp
-                for k in range(i + 1, self.SIZE):
-                    if tmp == self.FIELD[k][j]:
-                        count_col += 1
-                        if count_col == self.SIZE - 1:
-                            return tmp
+                string_row += self.FIELD[i][j]
+                if len(string_row) == self.SIZE:
+                    if string_row == "XXX":
+                        return "X"
+                    elif string_row == "OOO":
+                        return "O"
+                    else:
+                        string_row = ""
+            string_row = ""
+        string_col = ""
+        for i in range(self.SIZE):
+            for j in range(self.SIZE):
+                if self.FIELD[j][i] == "_":
+                    continue
+                string_col += self.FIELD[j][i]
+                if len(string_col) == self.SIZE:
+                    if string_col == "XXX":
+                        return "X"
+                    elif string_col == "OOO":
+                        return "O"
+                    else:
+                        string_col = ""
+            string_col = ""
         diag_p = []
         diag_s = []
         count_ = 0

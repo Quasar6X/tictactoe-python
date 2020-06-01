@@ -32,7 +32,7 @@ def restart():
         run()
         return
     elif res == 'n' or res == 'no':
-        exit(0)
+        sys.exit(0)
     else:
         print("!!!  Please choose yes or no!")
         restart()
@@ -60,7 +60,7 @@ def run():
             inp.replace(" ", "")
             inp.replace("\t", "")
             if inp == 'q' or inp == 'quit':
-                exit(0)
+                sys.exit(0)
             if inp == 'r' or inp == 'reset':
                 P1.set_score(0)
                 AI.set_score(0)
@@ -151,7 +151,7 @@ print("_______\\                      \\ \\__\\   \\ \\_______\\   \\ \\_______\
 print("        \\|__|    \\|__|    \\|_______|                       \\|__|    \\|__|\\|__|    \\|_______|    ", end="")
 print("                   \\|__|    \\|_______|    \\|_______|")
 print("                                                                    BY QUASAR6", end="")
-print("                                                                v1.0.5\n")
+print("                                                                v1.0.6\n")
 
 choose_name()
 help_message()
