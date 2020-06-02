@@ -13,10 +13,10 @@ marks = ('?', '!', '!?', '...', '(ノಠ益ಠ)ノ彡┻━┻', '..・ヾ(。�
 
 
 def choose_name():
-    P1.set_name(Player.def_name_1)
+    P1.name = Player.def_name_1
     name = input("!!!  Do you want to choose a name? (y/n) > ")
     if name == 'y' or name == 'yes':
-        P1.set_name(input("Player 1 name: ").strip())
+        P1.name = input("Player 1 name: ").strip()
     elif name == 'n' or name == 'no':
         return
     else:
@@ -39,12 +39,12 @@ def restart():
 
 
 def print_standings():
-    print(P1.get_name() + " - " + AI.get_name())
-    print(" " * (len(P1.get_name()) - 1) + str(P1.get_score()) + " - " + str(AI.get_score()) + "\n")
+    print(P1.name + " - " + AI.name)
+    print(" " * (len(P1.name) - 1) + str(P1.score) + " - " + str(AI.score) + "\n")
 
 
 def help_message():
-    print("\n!!!  Valid position values: 1-" + str(field.get_size()))
+    print("\n!!!  Valid position values: 1-" + str(field.SIZE))
     print("!!!  Values are to be separated by a comma ',' first is row second is column e.g. '2,3'")
     print("!!!  In order to quit type 'quit' or 'q'")
     print("!!!  In order to reset the scoreboard type 'reset' or 'r'")
@@ -55,15 +55,15 @@ def run():
     pls = "\n!!!  Please retry!"
     if Game.p_turn == "X":
         while True:
-            inp = input(P1.get_name() + " > ")
+            inp = input(P1.name + " > ")
             inp.lower()
             inp.replace(" ", "")
             inp.replace("\t", "")
             if inp == 'q' or inp == 'quit':
                 sys.exit(0)
             if inp == 'r' or inp == 'reset':
-                P1.set_score(0)
-                AI.set_score(0)
+                P1.score = 0
+                AI.score = 0
                 print_standings()
                 run()
                 return
@@ -82,13 +82,13 @@ def run():
             py = int(positions[1])
             px -= 1
             py -= 1
-            if px < 0 or px > field.get_size() - 1 or py < 0 or py > field.get_size() - 1:
+            if px < 0 or px > field.SIZE - 1 or py < 0 or py > field.SIZE - 1:
                 print("!!!  Invalid position!" + pls)
                 run()
                 return
 
             if not field.set_field_symbol(px, py):
-                print("!!!  That field already has a symbol: " + field.get_symbol_at(px, py) + pls)
+                print("!!!  That field already has a symbol: " + field.FIELD[px][py] + pls)
                 run()
                 return
 
@@ -114,14 +114,14 @@ def run():
 
     result = field.is_match()
     if result == "X":
-        print(P1.get_name() + " Wins!")
-        P1.set_score(P1.get_score() + 1)
+        print(P1.name + " Wins!")
+        P1.score += 1
         print_standings()
         restart()
         return
     if result == "O":
-        print(AI.get_name() + " Wins!")
-        AI.set_score(AI.get_score() + 1)
+        print(AI.name + " Wins!")
+        AI.score += 1
         print_standings()
         restart()
         return
