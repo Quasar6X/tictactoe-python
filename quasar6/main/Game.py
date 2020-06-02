@@ -73,8 +73,8 @@ class Field:
                     else:
                         string_col = ""
             string_col = ""
-        diag_p = []
-        diag_s = []
+        diag_p = ""
+        diag_s = ""
         count_ = 0
         for i in range(self.SIZE):
             for j in range(self.SIZE):
@@ -82,16 +82,20 @@ class Field:
                     count_ += 1
                     continue
                 if i == j:
-                    diag_p.append(self.FIELD[i][j])
+                    diag_p += self.FIELD[i][j]
                 if i + j == self.SIZE - 1:
-                    diag_s.append(self.FIELD[i][j])
+                    diag_s += self.FIELD[i][j]
 
         if len(diag_p) == self.SIZE:
-            if diag_p.count(diag_p[0]) == len(diag_p):
-                return diag_p[0]
+            if diag_p == "XXX":
+                return "X"
+            elif diag_p == "OOO":
+                return "O"
         if len(diag_s) == self.SIZE:
-            if diag_s.count(diag_s[0]) == len(diag_s):
-                return diag_s[0]
+            if diag_s == "XXX":
+                return "X"
+            elif diag_s == "OOO":
+                return "O"
         if count_ == 0:
             return "draw"
         return "Invalid game state!"
