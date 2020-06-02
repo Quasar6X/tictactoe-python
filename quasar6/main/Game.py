@@ -46,32 +46,28 @@ class Field:
 
     def is_match(self):
         string_row = ""
-        for i in range(self.SIZE):
-            for j in range(self.SIZE):
-                if self.FIELD[i][j] == "_":
-                    continue
-                string_row += self.FIELD[i][j]
-                if len(string_row) == self.SIZE:
-                    if string_row == "XXX":
-                        return "X"
-                    elif string_row == "OOO":
-                        return "O"
-                    else:
-                        string_row = ""
-            string_row = ""
         string_col = ""
         for i in range(self.SIZE):
             for j in range(self.SIZE):
-                if self.FIELD[j][i] == "_":
-                    continue
-                string_col += self.FIELD[j][i]
-                if len(string_col) == self.SIZE:
-                    if string_col == "XXX":
-                        return "X"
-                    elif string_col == "OOO":
-                        return "O"
-                    else:
-                        string_col = ""
+                if self.FIELD[i][j] != "_":
+                    string_row += self.FIELD[i][j]
+                    if len(string_row) == self.SIZE:
+                        if string_row == "XXX":
+                            return "X"
+                        elif string_row == "OOO":
+                            return "O"
+                        else:
+                            string_row = ""
+                if self.FIELD[j][i] != "_":
+                    string_col += self.FIELD[j][i]
+                    if len(string_col) == self.SIZE:
+                        if string_col == "XXX":
+                            return "X"
+                        elif string_col == "OOO":
+                            return "O"
+                        else:
+                            string_col = ""
+            string_row = ""
             string_col = ""
         diag_p = ""
         diag_s = ""
@@ -98,30 +94,19 @@ class Field:
                 return "O"
         if count_ == 0:
             return "draw"
-        return "Invalid game state!"
+        return "No match"
 
     def reset_field(self):
         for i in range(self.SIZE):
             for j in range(self.SIZE):
                 self.FIELD[i][j] = "_"
 
-    def get_size(self):
-        return self.SIZE
-
-    def get_symbol_at(self, i, j):
-        return self.FIELD[i][j]
-
     def max(self, alpha, beta):
         max_score = -2
         px, py = (None, None)
-        result = self.is_match()
-
-        if result == 'X':
-            return -1, 0, 0
-        elif result == 'O':
-            return 1, 0, 0
-        elif result == 'draw':
-            return 0, 0, 0
+        result = self.result()
+        if result is not False:
+            return result
 
         for i in range(self.SIZE):
             for j in range(self.SIZE):
@@ -143,14 +128,9 @@ class Field:
     def min(self, alpha, beta):
         min_score = 2
         qx, qy = (None, None)
-        result = self.is_match()
-
-        if result == 'X':
-            return -1, 0, 0
-        elif result == 'O':
-            return 1, 0, 0
-        elif result == 'draw':
-            return 0, 0, 0
+        result = self.result()
+        if result is not False:
+            return result
 
         for i in range(self.SIZE):
             for j in range(self.SIZE):
@@ -168,3 +148,14 @@ class Field:
                         return min_score, qx, qy
                     min_score = min(min_score, beta)
         return min_score, qx, qy
+
+    def result(self):
+        result = self.is_match()
+
+        if result == 'X':
+            return -1, 0, 0
+        elif result == 'O':
+            return 1, 0, 0
+        elif result == 'draw':
+            return 0, 0, 0
+        return False
