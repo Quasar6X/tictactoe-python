@@ -9,7 +9,7 @@ P1 = Player(Player.def_name_1)
 AI = Player(Player.def_name_2)
 field = Game.Field.get_instance()
 sounds = ('beep', 'boop', 'bleep', 'bloop')
-marks = ('?', '!', '!?', '...', '(ノಠ益ಠ)ノ彡┻━┻', '..・ヾ(。＞＜)シ')
+marks = ('?', '!', '!?', '...', ' (ノಠ益ಠ)ノ彡┻━┻', ' ..・ヾ(。＞＜)シ')
 
 
 def choose_name():
@@ -72,14 +72,14 @@ def run():
                 run()
                 return
 
-            positions = inp.split(",")
-            if len(positions) < 2 or not re.match("^[ ]*[1-3][ ]*,[ ]*[1-3][ ]*$", inp):
+            pos = inp.split(",")
+            if len(pos) < 2 or not re.match("^[ ]*[1-{size}][ ]*,[ ]*[1-{size}][ ]*$".format(size=field.SIZE), inp):
                 print("!!!  Invalid position!" + pls)
                 run()
                 return
 
-            px = int(positions[0])
-            py = int(positions[1])
+            px = int(pos[0])
+            py = int(pos[1])
             px -= 1
             py -= 1
             if px < 0 or px > field.SIZE - 1 or py < 0 or py > field.SIZE - 1:
