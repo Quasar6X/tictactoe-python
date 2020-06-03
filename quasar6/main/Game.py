@@ -16,8 +16,7 @@ class Field:
     def __init__(self):
         if Field.__instance is not None:
             raise Exception("Do not instantiate!")
-        else:
-            Field.__instance = self
+        Field.__instance = self
         self.SIZE = 3
         self.FIELD = [["_"] * self.SIZE for _ in range(self.SIZE)]
 
@@ -52,21 +51,17 @@ class Field:
                 if self.FIELD[i][j] != "_":
                     string_row += self.FIELD[i][j]
                     if len(string_row) == self.SIZE:
-                        if string_row == "XXX":
-                            return "X"
-                        elif string_row == "OOO":
-                            return "O"
-                        else:
-                            string_row = ""
+                        valid = self.valid(string_row)
+                        if valid is not False:
+                            return valid
+                        string_row = ""
                 if self.FIELD[j][i] != "_":
                     string_col += self.FIELD[j][i]
                     if len(string_col) == self.SIZE:
-                        if string_col == "XXX":
-                            return "X"
-                        elif string_col == "OOO":
-                            return "O"
-                        else:
-                            string_col = ""
+                        valid = self.valid(string_col)
+                        if valid is not False:
+                            return valid
+                        string_col = ""
             string_row = ""
             string_col = ""
         diag_p = ""
@@ -83,14 +78,14 @@ class Field:
                     diag_s += self.FIELD[i][j]
 
         if len(diag_p) == self.SIZE:
-            if diag_p == "XXX":
+            if diag_p == "X" * self.SIZE:
                 return "X"
-            elif diag_p == "OOO":
+            elif diag_p == "O" * self.SIZE:
                 return "O"
         if len(diag_s) == self.SIZE:
-            if diag_s == "XXX":
+            if diag_s == "X" * self.SIZE:
                 return "X"
-            elif diag_s == "OOO":
+            elif diag_s == "O" * self.SIZE:
                 return "O"
         if count_ == 0:
             return "draw"
@@ -158,4 +153,11 @@ class Field:
             return 1, 0, 0
         elif result == 'draw':
             return 0, 0, 0
+        return False
+
+    def valid(self, chars):
+        if chars == "X" * self.SIZE:
+            return "X"
+        elif chars == "O" * self.SIZE:
+            return "O"
         return False
