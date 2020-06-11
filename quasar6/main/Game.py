@@ -28,6 +28,9 @@ class Field:
         return True
 
     def print_field(self):
+        """
+        Prints the game field to the console only used for debugging purposes!
+        """
         print(" " * (74 - int(self.SIZE / 2 + int((self.SIZE + 1) / 2))), end="")
         print("-" * (self.SIZE * 2 + 3))
         for i in range(self.SIZE):
