@@ -6,9 +6,6 @@ This little python program is a Tic-Tac-Toe that I wrote for python learning pur
 
 ## :question: FAQ :question:
 
-* > How do I control it? / How does it work?
-*   Have you tried the ***help*** command?
-
 * > How did you make that cool ASCII art?
 *   Link to online [ASCII art generator](http://patorjk.com/software/taag/).
 
