@@ -1,9 +1,7 @@
-import os
-import re
-import sys
 import random as rnd
 from quasar6.main.Player import Player
 from quasar6.main import Game
+from appJar import gui
 
 P1 = Player(Player.def_name_1)
 AI = Player(Player.def_name_2)
@@ -12,148 +10,130 @@ sounds = ('beep', 'boop', 'bleep', 'bloop')
 marks = ('?', '!', '!?', '...', ' (ノಠ益ಠ)ノ彡┻━┻', ' ..・ヾ(。＞＜)シ')
 
 
-def choose_name():
-    P1.name = Player.def_name_1
-    name = input("!!!  Do you want to choose a name? (y/n) > ")
-    if name == 'y' or name == 'yes':
-        P1.name = input("Player 1 name: ").strip()
-    elif name == 'n' or name == 'no':
+def set_player_name():
+    string = app.stringBox("Choose a name", "Choose a name, or leave empty for default!")
+    if string is None:
         return
-    else:
-        print("!!!  Please choose yes or no!")
-        choose_name()
+    if len(string) > 25:
+        app.warningBox("Wrong Player name", "Player name too long! It must not exceed 25 characters.")
+        set_player_name()
+        return
+    if len(string) != 0:
+        P1.name = string
+
+
+def reset_scores():
+    AI.score = 0
+    P1.score = 0
+    app.setLabel("Scores", str(P1.score) + " - " + str(AI.score))
 
 
 def restart():
-    res = input("!!!  Another round? (y/n) > ")
-    res.lower().strip()
-    if res == 'y' or res == 'yes':
-        field.reset_field()
-        run()
+    for i in range(field.SIZE):
+        for j in range(field.SIZE):
+            app.setButtonFg(str(i) + "_" + str(j), "black")
+            app.enableButton(str(i) + "_" + str(j))
+            field.reset_field()
+            app.setButton(str(i) + "_" + str(j), field.FIELD[i][j])
+
+
+def on_press(name):
+    if app.getButton(name) == "_" and Game.p_turn == "X":
+        app.setButtonFg(name, "blue")
+        app.clearMessage("AI")
+        app.setButton(name, "X")
+        strings = name.split("_")
+        field.set_field_symbol(int(strings[0]), int(strings[1]))
+        Game.p_turn = "O"
+        if is_win() == "X":
+            yesno = app.yesNoBox("You win", "You win!\nAnother round?")
+            if yesno:
+                restart()
+            else:
+                exit()
+            return
+        ai_turn()
         return
-    elif res == 'n' or res == 'no':
-        sys.exit(0)
-    else:
-        print("!!!  Please choose yes or no!")
-        restart()
 
 
-def print_standings():
-    print(P1.name + " - " + AI.name)
-    print(" " * (len(P1.name) - 1) + str(P1.score) + " - " + str(AI.score) + "\n")
+def disable_buttons():
+    for i in range(field.SIZE):
+        for j in range(field.SIZE):
+            app.disableButton(str(i) + "_" + str(j))
 
 
-def help_message():
-    print("\n!!!  Valid position values: 1-" + str(field.SIZE))
-    print("!!!  Values are to be separated by a comma ',' first is row second is column e.g. '2,3'")
-    print("!!!  In order to quit type 'quit' or 'q'")
-    print("!!!  In order to reset the scoreboard type 'reset' or 'r'")
-    print("!!!  In order to show this help message type 'help' or 'h'\n")
+def is_win():
+    result = field.is_match()
+    if result == "X":
+        P1.score += 1
+        disable_buttons()
+        app.setLabel("Scores", str(P1.score) + " - " + str(AI.score))
+        return "X"
+    if result == "O":
+        AI.score += 1
+        disable_buttons()
+        app.setLabel("Scores", str(P1.score) + " - " + str(AI.score))
+        return "O"
+    if result == "draw":
+        disable_buttons()
+        return "Draw"
+    return False
 
 
-def run():
-    pls = "\n!!!  Please retry!"
-    if Game.p_turn == "X":
-        while True:
-            inp = input(P1.name + " > ")
-            inp.lower()
-            inp.replace(" ", "")
-            inp.replace("\t", "")
-            if inp == 'q' or inp == 'quit':
-                sys.exit(0)
-            if inp == 'r' or inp == 'reset':
-                P1.score = 0
-                AI.score = 0
-                print_standings()
-                run()
-                return
-            if inp == 'h' or inp == 'help':
-                help_message()
-                run()
-                return
-
-            pos = inp.split(",")
-            if len(pos) < 2 or not re.match("^[ ]*[1-{size}][ ]*,[ ]*[1-{size}][ ]*$".format(size=field.SIZE), inp):
-                print("!!!  Invalid position!" + pls)
-                run()
-                return
-
-            px = int(pos[0])
-            py = int(pos[1])
-            px -= 1
-            py -= 1
-            if px < 0 or px > field.SIZE - 1 or py < 0 or py > field.SIZE - 1:
-                print("!!!  Invalid position!" + pls)
-                run()
-                return
-
-            if not field.set_field_symbol(px, py):
-                print("!!!  That field already has a symbol: " + field.FIELD[px][py] + pls)
-                run()
-                return
-
-            field.print_field()
-            Game.p_turn = "O"
-            break
-    else:
+def ai_turn():
+    if Game.p_turn == "O":
         beep = ""
-        for x in range(5, 16):
+        for x in range(3, 7):
             if x == 0:
                 beep += str(rnd.choice(sounds))
             else:
                 beep += str(rnd.choice(sounds))
-            if x != 15:
+            if x != 6:
                 beep += " "
 
         beep += rnd.choice(marks)
-        print(beep.capitalize())
+        app.setMessage("AI", "AI: " + beep.capitalize())
         (m, px, py) = field.max(-2, 2)
         field.set_field_symbol(px, py)
-        field.print_field()
+        app.setButton(str(px) + "_" + str(py), "O")
+        app.setButtonFg(str(px) + "_" + str(py), "red")
         Game.p_turn = "X"
-
-    result = field.is_match()
-    if result == "X":
-        print(P1.name + " Wins!")
-        P1.score += 1
-        print_standings()
-        restart()
-        return
-    if result == "O":
-        print(AI.name + " Wins!")
-        AI.score += 1
-        print_standings()
-        restart()
-        return
-    if result == "draw":
-        print("It's a draw!")
-        print_standings()
-        restart()
-        return
-
-    run()
+        if is_win() == "O":
+            yesno = app.yesNoBox("AI Wins", "AI Wins!\nAnother round?")
+            if yesno:
+                restart()
+            else:
+                exit()
+            return
+        elif is_win() == "Draw":
+            yesno = app.yesNoBox("Draw", "It's a draw!\nAnother round?")
+            if yesno:
+                restart()
+            else:
+                exit()
+            return
+        return 
 
 
-sys.stdout.write("\x1b[8;{rows};{cols}t".format(rows=40, cols=148))
-os.system("title Tic-Tac-Toe by Quasar6")
-print("\n _________    ___      ________                     _________    ________      ________              ", end="")
-print("       _________    ________      _______      ")
-print("|\\___   ___\\ |\\  \\    |\\   ____\\                   |\\___   ___\\ |\\   __  \\    |\\   ____\\   ", end="")
-print("                |\\___   ___\\ |\\   __  \\    |\\  ___ \\     ")
-print("\\|___ \\  \\_| \\ \\  \\   \\ \\  \\___|     ____________  \\|___ \\  \\_| \\ \\  \\|\\  \\   \\ \\  ", end="")
-print("\\___|     ____________  \\|___ \\  \\_| \\ \\  \\|\\  \\   \\ \\   __/|    ")
-print("     \\ \\  \\   \\ \\  \\   \\ \\  \\       |\\____________\\     \\ \\  \\   \\ \\   __  \\   \\ \\  ", end="")
-print("\\       |\\____________\\     \\ \\  \\   \\ \\  \\\\\\  \\   \\ \\  \\_|/__  ")
-print("      \\ \\  \\   \\ \\  \\   \\ \\  \\____  \\|____________|      \\ \\  \\   \\ \\  \\ \\  \\   \\ \\", end="")
-print("  \\____  \\|____________|      \\ \\  \\   \\ \\  \\\\\\  \\   \\ \\  \\_|\\ \\ ")
-print("       \\ \\__\\   \\ \\__\\   \\ \\_______\\                      \\ \\__\\   \\ \\__\\ \\__\\   \\ \\", end="")
-print("_______\\                      \\ \\__\\   \\ \\_______\\   \\ \\_______\\")
-print("        \\|__|    \\|__|    \\|_______|                       \\|__|    \\|__|\\|__|    \\|_______|    ", end="")
-print("                   \\|__|    \\|_______|    \\|_______|")
-print("                                                                    BY QUASAR6", end="")
-print("                                                                v1.0.6\n")
+app = gui("Tic-Tac-Toe by Quasar6     Version 1.1", "400x600")
+app.setBg("lightyellow")
+app.setSticky("news") # noqa
+app.setExpand("both") # noqa
+app.setFont(size=24)
+set_player_name()
+for k in range(field.SIZE):
+    for n in range(field.SIZE):
+        app.addNamedButton(field.FIELD[k][n], str(k) + "_" + str(n), on_press, k, n, 1)
+        app.setButtonBg(str(k) + "_" + str(n), "lightyellow")
 
-choose_name()
-help_message()
-print_standings()
-run()
+app.setSticky("s") # noqa
+app.setExpand("column") # noqa
+app.addEmptyMessage("AI", 3, 0, 3)
+app.setMessageAspect("AI", 400)
+app.addLabel("Sc", P1.name + " - " + AI.name, 4, 0, 3)
+app.addLabel("Scores", str(P1.score) + " - " + str(AI.score), 5, 0, 3)
+app.getLabelWidget("Sc").config(font="Helvetica 20")
+app.getLabelWidget("Scores").config(font="Helvetica 20")
+app.addNamedButton("Reset Scores", "ResScore", reset_scores, 7, 0, 3)
+app.setButtonBg("ResScore", "red")
+app.go()
